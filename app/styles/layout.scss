@@ -1,0 +1,178 @@
+$header-height: 55px;
+$header-transition: 0.125s;
+$header-height-mobile: 45px;
+
+$min-viewport-height: 850px;
+
+html,
+body {
+  height: 100%;
+  background: #FFF;
+  user-select: none;
+}
+
+// ============================================================================
+// Bootstrap
+// ============================================================================
+
+.container {
+  transition: width 0.125s, padding 0.125s;
+}
+.container-maximize {
+  width: auto;
+  padding: 0;
+}
+.container-safari-fix {
+  transition: none;
+}
+
+// ============================================================================
+// Header
+// ============================================================================
+.header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: $header-height;
+  z-index: 10;
+
+  border-bottom: 1px solid #CCC;
+  background: #FFF;
+  padding: 10px 15px;
+
+  transition: background $header-transition, height $header-transition;
+
+  .logo {
+    position: absolute;
+    top: 17px;
+    left: 50%;
+    width: 200px;
+    margin-left: -100px;
+    font-size: 18px;
+  }
+
+  .new-game {
+    width: 100px;
+  }
+}
+
+@media (max-width: $screen-sm-max) {
+  .header {
+    padding: 5px 15px !important;
+    height: $header-height-mobile;
+
+    .logo {
+      top: 10px;
+    }
+  }
+}
+
+// ============================================================================
+// Body
+// ============================================================================
+.body {
+  position: absolute;
+  top: $header-height;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  background: transparent;
+  padding: 0;
+
+  transition: background $header-transition;
+}
+.page-header {
+  background: #EEE;
+  padding: 20px;
+  border-bottom: 1px solid #DDD;
+  margin: 0 auto 20px;
+}
+
+@media (max-width: $screen-sm-max) {
+  .body {
+    top: $header-height-mobile;
+  }
+}
+
+// ============================================================================
+// Game
+// ============================================================================
+
+.game {
+  position: absolute;
+  top: 3px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  // Vertically center children
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.game-background {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: #222;
+}
+
+.board {
+  position: relative;
+  top: -25px;
+  background-color: #e2cd95;
+  border-radius: 10px;
+  box-shadow:
+    10px 10px 0px #827555,
+    9px 9px 25px rgba(0,0,0,0.5),
+    inset 0 1px 1px -1px #f2dfb0,
+    0 -1px 3px #f2dfb0;
+
+  .gems, .wells {
+    position: absolute;
+    top: 15px;
+    left: 0;
+    bottom: 0;
+    right: 0;
+  }
+
+  .tray, .well, .gem {
+    position: absolute;
+    border-radius: 50%;
+  }
+
+  .tray, .well {
+    box-shadow: rgba(0, 0, 0, 0.3) -5px -5px 80px -7px inset;
+
+    &.turn-player-1 {
+      background-color: rgba(155, 185, 255, 0.2);
+    }
+    &.turn-player-2 {
+      background-color: rgba(255, 155, 155, 0.2);
+    }
+  }
+
+  .gem{
+    box-shadow: rgba(0, 0, 0, 0.8) -5px -5px 80px -7px inset;
+  }
+
+  .wells {
+    z-index: 2;
+  }
+
+  .gems {
+    z-index: 1;
+  }
+}
+
+@media(max-height: $min-viewport-height) {
+  .board {
+    position: absolute;
+    top: 25px;
+    margin-bottom: 100px;
+  }
+}

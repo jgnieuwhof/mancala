@@ -1,0 +1,17 @@
+$headings-font-family: Roboto, $font-family-sans-serif;
+@import url(https://fonts.googleapis.com/css?family=Roboto:300,700);
+
+.separator-bullet {
+  position: relative;
+  top: 1px;
+
+  font-weight: bold;
+  padding: 0 2px;
+}
+
+a {
+  cursor: pointer;
+  &:hover {
+    text-decoration: none;
+  }
+}
