@@ -2,10 +2,9 @@ import React, { Component } from 'react'
 import { Button, ButtonGroup } from 'react-bootstrap'
 import { connect } from 'react-redux'
 
+import { PLAYER } from 'constants'
 import withSocket from 'components/with/socket'
-
 import { generateGemPositions } from 'helpers/game'
-
 import { startGame, startMatchMaking } from 'reducers/reduceGame'
 
 class Start extends Component {
@@ -18,8 +17,9 @@ class Start extends Component {
   componentDidMount = () => {
     let { settings } = this.state
     let { socket, dispatch } = this.props
-    socket.on(`server::matchMade`, ({ gems }) => {
-      dispatch(startGame({ settings, gems }))
+    socket.on(`server::matchMade`, ({ gems, player1 }) => {
+      let player = player1 === socket.id ? PLAYER._1 : PLAYER._2
+      dispatch(startGame({ settings, gems, player }))
     })
   }
 

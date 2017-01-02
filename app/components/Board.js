@@ -1,33 +1,40 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { GAME } from 'constants'
-
 import Gem from 'components/Gem'
-
-import { makeMove, nextTurn } from 'reducers/reduceGame'
+import withSocket from 'components/with/socket'
+import { GAME } from 'constants'
+import { isActiveWell } from 'helpers/game'
+import { makeMove } from 'reducers/reduceGame'
 
 class Board extends Component {
 
+  componentDidMount = () => {
+    let { socket, dispatch } = this.props
+    socket.on(`server::makeMove`, ({ start }) => {
+      dispatch(makeMove({ start }))
+    })
+  }
+
   onWellClick = ({ id }) => {
-    let { wells, turn, dispatch } = this.props
+    let { wells, turn, player, dispatch, socket } = this.props
     let well = wells[id]
-    if (well.player === turn && well.gems.length > 0) {
-      let { id: start, gems: { length: nMoves } } = well
-      dispatch(makeMove({ start: well.id }))
-      dispatch(nextTurn({ start, nMoves }))
+    if (isActiveWell({ well, player, turn })) {
+      let { id: start } = well
+      socket.emit(`client::makeMove`, { start })
+      dispatch(makeMove({ start }))
     }
   }
 
   render = () => {
-    let { wells, gems, turn } = this.props
+    let { wells, gems, turn, player } = this.props
     let boardDim = { width: 325, height: 760 }
     let wellDim = { width: 80, height: 80 }
     let trayDim = { width: 300, height: 80 }
     let numRows = (GAME.NUM_WELLS / 2) + 1
     let vertSpace = (boardDim.height / numRows) - 2
     let wellMeta = wells.reduce((obj, well) => {
-      let turnClass = turn === well.player ? `turn-${turn}` : ``
+      let turnClass = isActiveWell({ well, player, turn }) ? `turn-${turn}` : ``
       let style, className, onClick
       if (well.id === 6) {
         style = {
@@ -88,7 +95,8 @@ function mapStateToProps(state) {
     wells: state.game.wells,
     gems: state.game.gems,
     turn: state.game.turn,
+    player: state.game.player,
   }
 }
 
-export default connect(mapStateToProps)(Board)
+export default withSocket(connect(mapStateToProps)(Board))

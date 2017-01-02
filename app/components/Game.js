@@ -12,7 +12,9 @@ import { newGame } from 'reducers/reduceGame'
 class Game extends Component {
   componentDidMount = () => {
     let { socket, dispatch } = this.props
-    socket.on(`server::abandoned`, () => { dispatch(newGame()) })
+    socket.on(`server::abandoned`, () => {
+      dispatch(newGame())
+    })
   }
 
   render = () => {

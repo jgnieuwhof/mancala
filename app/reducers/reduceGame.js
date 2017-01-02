@@ -33,27 +33,31 @@ export const startMatchMaking = () => {
   }
 }
 
-export const startGame = ({ settings, gems }) => {
+export const startGame = ({ settings, gems, player }) => {
   return (dispatch) => {
     dispatch({
       type: game.START_GAME,
       setup: settings.setup,
-      gems,
+      gems, player
     })
   }
 }
 
 export const makeMove = ({ start }) => {
-  return (dispatch, getState) => {
+  return (dispatch, getState, { socket }) => {
     let { game: { turn, wells } } = getState()
     let nMoves = wells[start].gems.length
+    let finalWell = (start + nMoves) % GAME.NUM_WELLS
+
+    // Move all gems from one well to the next, leaving behind one each time
     for(let i = 0; i < nMoves; i++) {
       let currentWell = (start + i) % GAME.NUM_WELLS
       for(let j = 0; j < (nMoves - i); j++) {
         dispatch({ type: game.MAKE_MOVE, well: currentWell })
       }
     }
-    let finalWell = (start + nMoves) % GAME.NUM_WELLS
+
+    // Let's check if we captured a well, and capture if so
     let isCurPlayerWell = isPlayerWell({ wellId: finalWell, player: turn })
     let correspondingWell = (GAME.NUM_WELLS - 2) - finalWell
     if (isCurPlayerWell && wells[finalWell].gems.length === 0 && wells[correspondingWell].gems.length > 0) {
@@ -61,28 +65,24 @@ export const makeMove = ({ start }) => {
       dispatch({ type: game.CAPTURE_WELL, well: correspondingWell })
       dispatch(addNotification({ message: `Captured!`, level: `success`  }))
     }
-  }
-}
 
-export const nextTurn = ({ start, nMoves }) => {
-  return (dispatch, getState) => {
-    let { game: { turn, wells } } = getState()
-    let wellsWithGems = wells.filter(w => (w.type === TRAY_TYPE.WELL && w.gems.length > 0))
-    if (wellsWithGems.length === 0)
+    // Any pieces left?
+    // If not did the last piece end in the player's tray?
+    // Also account for the next player not having any pieces to move
+    wells = getState().game.wells // refresh our wells
+    if (!wells.some(w => (w.type === TRAY_TYPE.WELL && w.gems.length > 0))) {
+      socket.emit(`client::finishGame`)
       dispatch({ type: game.FINISH_GAME })
+    }
     else {
-      let hasFreeTurn = (start + nMoves % GAME.NUM_WELLS) === GAME.TRAY[turn]
-      let newTurn = hasFreeTurn ? turn : otherTurn({ turn })
-      let playerWellsWithGems = wells.filter(w => {
-        return isPlayerWell({ wellId: w.id, player: newTurn }) && w.gems.length > 0
-      })
-      if (playerWellsWithGems.length > 0) {
-        if (hasFreeTurn)
-          dispatch(addNotification({ message: `Free turn!`, level: `success` }))
-        dispatch({ type: game.CHANGE_TURN, turn: newTurn })
-      }
-      else
-        dispatch({ type: game.CHANGE_TURN, turn: otherTurn({ turn: newTurn })})
+      let hasFreeTurn = finalWell === GAME.TRAY[turn]
+      if (!hasFreeTurn)
+        turn = otherTurn({ turn })
+      if (!wells.some(w => isPlayerWell({ wellId: w.id, player: turn }) && w.gems.length > 0))
+        turn = otherTurn({ turn })
+      else if (hasFreeTurn)
+        dispatch(addNotification({ message: `Free turn!`, level: `success` }))
+      dispatch({ type: game.CHANGE_TURN, turn })
     }
   }
 }
@@ -96,6 +96,7 @@ export const defaultState = {
   gems: [],
   wells: [],
   turn: PLAYER._1,
+  player: null,
 }
 
 export default function reduceGame(state = defaultState, action) {
@@ -131,6 +132,7 @@ export default function reduceGame(state = defaultState, action) {
         gems: newGems,
         wells: newWells,
         turn: defaultState.turn,
+        player: action.player,
       }
       break
 

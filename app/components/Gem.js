@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
-import _ from 'lodash'
 
 import { randomInCircle } from 'helpers/maths'
 
-const radius = 5
+const radius = 10
 const padding = 30
 
 export default class Gem extends Component {
@@ -38,7 +37,7 @@ export default class Gem extends Component {
       height: `${height}px`,
     }
     return (
-      <div className="gem" style={style}></div>
+      <div className="gem" style={style} />
     )
   }
 }

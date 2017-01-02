@@ -11,6 +11,10 @@ export const isPlayerWell = ({ wellId, player }) => {
   return wellId >= GAME.WELLS[player][0] && wellId <= GAME.WELLS[player][1]
 }
 
+export const isActiveWell = ({ player, turn, well }) => {
+  return player === well.player && player === turn && well.gems.length > 0
+}
+
 export const generateGemPositions = ({ setup }) => {
   let gems = {}
   for(let id = 0; id < GAME.NUM_GEMS; id++) {
