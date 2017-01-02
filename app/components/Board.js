@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { TURN, PLAYER, GAME } from 'constants'
+import { GAME } from 'constants'
 
 import Gem from 'components/Gem'
 

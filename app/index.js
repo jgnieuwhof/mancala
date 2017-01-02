@@ -9,13 +9,18 @@ import { Provider } from 'react-redux'
 import { createStore, compose, applyMiddleware } from 'redux'
 import thunk from 'redux-thunk'
 import NotificationSystem from 'react-notification-system'
+import io from 'socket.io-client'
 
 import Routes from 'components/Routes'
+import SocketProvider from 'components/SocketProvider'
 
 import finalReducer from 'reducers/reduce'
 
+const SOCKET = io(API_URL)
+
 let thunkArg = {
   notificationSystem: {},
+  socket: SOCKET
 }
 
 const finalCreateStore = compose(
@@ -32,9 +37,11 @@ window.onload = () => {
   ReactDOM.render(
     <div>
       <Provider store={STORE}>
-        <Router history={browserHistory}>
-          { Routes }
-        </Router>
+        <SocketProvider socket={SOCKET}>
+          <Router history={browserHistory}>
+            { Routes }
+          </Router>
+        </SocketProvider>
       </Provider>
       <NotificationSystem ref={ref => { thunkArg.notificationSystem = ref }}/>
     </div>,

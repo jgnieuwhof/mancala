@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "API_URL='\"http://localhost:5000\"' node server.js"
   },
   "author": "Jordan Nieuwhof",
   "license": "ISC",
@@ -46,9 +46,15 @@
     "redux": "^3.6.0",
     "redux-thunk": "^2.1.0",
     "sass-loader": "^4.1.1",
+    "socket.io": "^1.7.2",
     "style-loader": "^0.13.1",
     "updeep": "^1.0.0",
     "webpack": "^1.14.0",
     "webpack-dev-server": "^1.16.2"
+  },
+  "devDependencies": {
+    "babel-eslint": "^7.1.1",
+    "eslint": "^3.12.2",
+    "eslint-plugin-react": "^6.8.0"
   }
 }

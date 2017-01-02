@@ -5,18 +5,46 @@ import { game } from 'actions'
 import { GAME_STATES, PLAYER, GAME, TRAY_TYPE } from 'constants'
 
 import { otherTurn, isPlayerWell } from 'helpers/game'
-import { randomInRange } from 'helpers/maths'
 import { addNotification } from 'helpers/notification'
 
 // ============================================================================
 // Game Action Creators
 // ============================================================================
 
-export const newGame = () => ({ type: game.NEW_GAME })
-export const startGame = ({ setup }) => ({ type: game.START_GAME, setup })
+export const newGame = () => {
+  return (dispatch) => {
+    dispatch({ type: game.NEW_GAME })
+  }
+}
+
+export const abandonGame = () => {
+  return (dispatch, getState, { socket }) => {
+    let { game: { gState } } = getState()
+    if (gState !== GAME_STATES.NEW) {
+      socket.emit(`client::abandonGame`)
+    }
+    dispatch(newGame())
+  }
+}
+
+export const startMatchMaking = () => {
+  return (dispatch) => {
+    dispatch({ type: game.START_MATCHMAKING })
+  }
+}
+
+export const startGame = ({ settings, gems }) => {
+  return (dispatch) => {
+    dispatch({
+      type: game.START_GAME,
+      setup: settings.setup,
+      gems,
+    })
+  }
+}
 
 export const makeMove = ({ start }) => {
-  return (dispatch, getState, { notificationSystem }) => {
+  return (dispatch, getState) => {
     let { game: { turn, wells } } = getState()
     let nMoves = wells[start].gems.length
     for(let i = 0; i < nMoves; i++) {
@@ -80,23 +108,24 @@ export default function reduceGame(state = defaultState, action) {
       break
 
     // ------------------------------------------------------------------------
+    case game.START_MATCHMAKING:
+      update = { gState: GAME_STATES.MATCHMAKING }
+      break
+
+    // ------------------------------------------------------------------------
     case game.START_GAME:
-      let newGems = []
       let newWells = []
-      let gemWells = {}
       for(let id = 0; id < GAME.NUM_WELLS; id++) {
         let player = id < (GAME.NUM_WELLS / 2) ? PLAYER._1 : PLAYER._2
         let type = [ GAME.TRAY[PLAYER._1], GAME.TRAY[PLAYER._2] ]
           .includes(id) ? TRAY_TYPE.TRAY : TRAY_TYPE.WELL
         newWells = [ ...newWells, { id, player, gems: [], type } ]
       }
-      for(let id = 0; id < GAME.NUM_GEMS; id++) {
-        let offset = (id < GAME.NUM_GEMS / 2) ? 0 : GAME.NUM_WELLS / 2
-        let well = action.setup === 'random' ? randomInRange({ min: 0, max: (GAME.NUM_WELLS / 2) - 2 }) : id % 6
-        let finalWell = offset + well
-        newWells[finalWell].gems = [ ...newWells[finalWell].gems, id ]
-        newGems = [ ...newGems, { id } ]
-      }
+      let newGems = Object.keys(action.gems).map(gemId => {
+        let well = action.gems[gemId]
+        newWells[well].gems = [ ...newWells[well].gems, gemId ]
+        return { id: gemId }
+      })
       update = {
         gState: GAME_STATES.PLAYING,
         gems: newGems,

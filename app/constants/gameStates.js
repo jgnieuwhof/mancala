@@ -1,6 +1,7 @@
 
 export default {
   NEW: 0,
-  PLAYING: 1,
-  DONE: 2,
+  MATCHMAKING: 1,
+  PLAYING: 2,
+  DONE: 3,
 }
