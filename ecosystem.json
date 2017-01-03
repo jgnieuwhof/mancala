@@ -5,7 +5,7 @@
     "args"        : [],
     "watch"       : true,
     "node_args"   : "",
-    "cwd"         : "/home/mancala/mancala/mancala-client/",
+    "cwd"         : "/home/mancala/mancala-client/",
     "env_production" : {
        "NODE_ENV": "production",
        "API_URL": "http://api.mancala.jgnieuwhof.xyz",
