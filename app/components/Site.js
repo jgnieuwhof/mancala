@@ -1,7 +1,10 @@
 import React from 'react'
 import Helmet from 'react-helmet'
 
-export default ({ children }) => {
+import Header from 'components/Header'
+import Game from 'components/Game'
+
+export default () => {
   let faviconConfig = [{
     rel: "icon",
     href: require('../img/favicon.ico'),
@@ -11,7 +14,10 @@ export default ({ children }) => {
   return (
     <div>
       <Helmet link={faviconConfig} />
-      <div>{ children }</div>
+      <Header />
+      <div className="body">
+        <Game />
+      </div>
     </div>
   )
 }
