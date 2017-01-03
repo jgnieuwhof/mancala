@@ -9,7 +9,7 @@
     "env_production" : {
        "NODE_ENV": "production",
        "API_URL": "http://api.mancala.jgnieuwhof.xyz",
-       "PORT": 80,
+       "PORT": 3000,
     }
   }]
 }
