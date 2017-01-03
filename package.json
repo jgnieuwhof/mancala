@@ -5,10 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": ". ./run-start-local.sh",
-    "start-prod": ". ./run-start-prod.sh",
-    "build": ". ./run-build.sh",
-    "serve": ". ./run-serve.sh"
+    "start": "API_URL=\"http://localhost:5000\" NODE_ENV=development node server.js",
+    "build": ". ./run-build.sh"
   },
   "author": "Jordan Nieuwhof",
   "license": "ISC",

@@ -1,0 +1,15 @@
+{
+  "apps" : [{
+    "name"        : "mancala-client",
+    "script"      : "server.prod.js",
+    "args"        : [],
+    "watch"       : true,
+    "node_args"   : "",
+    "cwd"         : "/home/mancala/mancala-client/",
+    "env_production" : {
+       "NODE_ENV": "production",
+       "API_URL": "http://api.mancala.jgnieuwhof.xyz",
+       "PORT": 80,
+    }
+  }]
+}
