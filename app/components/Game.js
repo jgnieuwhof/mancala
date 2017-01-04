@@ -1,38 +1,53 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { GAME_STATES } from 'constants'
+import { GAME_STATES, PLAYER } from 'constants'
 
 import Board from 'components/Board'
 import Start from 'components/Start'
 import withSocket from 'components/with/socket'
-
-import { newGame } from 'reducers/reduceGame'
+import { newGame, startGame } from 'reducers/reduceGame'
 
 class Game extends Component {
+
+  newGame = () => {
+    this.props.dispatch(newGame())
+  }
+
+  matchMade = ({ gems, player1 }) => {
+    let { settings, dispatch, socket } = this.props
+    let player = player1 === socket.id ? PLAYER._1 : PLAYER._2
+    dispatch(startGame({ settings, gems, player }))
+  }
+
   componentDidMount = () => {
-    let { socket, dispatch } = this.props
-    socket.on(`server::abandoned`, () => {
-      dispatch(newGame())
-    })
+    let { socket } = this.props
+    socket.on(`server::abandoned`, this.newGame)
+    socket.on(`server::matchMade`, this.matchMade)
+  }
+
+  componentWillUnmount = () => {
+    let { socket } = this.props
+    socket.off(`server::abandoned`, this.newGame)
+    socket.off(`server::matchMade`, this.matchMade)
   }
 
   render = () => {
-    let { game } = this.props
+    let { gState } = this.props
     return (
       <div className="game">
-        { game.gState === GAME_STATES.NEW &&
+        { gState === GAME_STATES.NEW &&
           <Start text={`Begin!`} />
         }
-        { game.gState === GAME_STATES.MATCHMAKING &&
+        { gState === GAME_STATES.MATCHMAKING &&
           <div className="text-center">
             <h2>Matchmaking...</h2>
           </div>
         }
-        { game.gState === GAME_STATES.PLAYING &&
+        { gState === GAME_STATES.PLAYING &&
           <Board />
         }
-        { game.gState === GAME_STATES.DONE &&
+        { gState === GAME_STATES.DONE &&
           <div>
             <Start text={`Play Again!`} />
           </div>
@@ -44,7 +59,8 @@ class Game extends Component {
 
 function mapStateToProps(state) {
   return {
-    game: state.game,
+    gState: state.game.gState,
+    settings: state.game.settings,
   }
 }
 

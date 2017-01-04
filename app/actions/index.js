@@ -8,6 +8,7 @@ export const game = namespaceActions(
     'START_GAME',
     'FINISH_GAME',
     'MAKE_MOVE',
+    'UPDATE_SETTINGS',
     'CHANGE_TURN',
     'CAPTURE_WELL',
   ]

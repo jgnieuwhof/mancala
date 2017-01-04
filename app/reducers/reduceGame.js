@@ -87,6 +87,12 @@ export const makeMove = ({ start }) => {
   }
 }
 
+export const updateSettings = (update) => {
+  return (dispatch) => {
+    dispatch({ type: game.UPDATE_SETTINGS, update })
+  }
+}
+
 // ============================================================================
 // Game Reducer
 // ============================================================================
@@ -97,6 +103,9 @@ export const defaultState = {
   wells: [],
   turn: PLAYER._1,
   player: null,
+  settings: {
+    setup: 'normal',
+  },
 }
 
 export default function reduceGame(state = defaultState, action) {
@@ -106,6 +115,11 @@ export default function reduceGame(state = defaultState, action) {
     // ------------------------------------------------------------------------
     case game.NEW_GAME:
       update = { gState: GAME_STATES.NEW }
+      break
+
+    // ------------------------------------------------------------------------
+    case game.UPDATE_SETTINGS:
+      update = { settings: action.update }
       break
 
     // ------------------------------------------------------------------------

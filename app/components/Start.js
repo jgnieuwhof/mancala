@@ -2,41 +2,24 @@ import React, { Component } from 'react'
 import { Button, ButtonGroup } from 'react-bootstrap'
 import { connect } from 'react-redux'
 
-import { PLAYER } from 'constants'
 import withSocket from 'components/with/socket'
 import { generateGemPositions } from 'helpers/game'
-import { startGame, startMatchMaking } from 'reducers/reduceGame'
+import { startMatchMaking, updateSettings } from 'reducers/reduceGame'
 
 class Start extends Component {
-  state = {
-    settings: {
-      setup: 'normal',
-    },
-  }
-
-  componentDidMount = () => {
-    let { settings } = this.state
-    let { socket, dispatch } = this.props
-    socket.on(`server::matchMade`, ({ gems, player1 }) => {
-      let player = player1 === socket.id ? PLAYER._1 : PLAYER._2
-      dispatch(startGame({ settings, gems, player }))
-    })
-  }
-
   updateSetup = (setup) => {
-    this.setState({ settings: { ...this.state.settings, setup } })
+    this.props.dispatch(updateSettings({ setup }))
   }
 
   start = () => {
-    let { settings } = this.state
-    let { dispatch, socket } = this.props
+    let { dispatch, socket, settings } = this.props
     let gems = generateGemPositions({ setup: settings.setup })
     socket.emit(`client::findOpponent`, { settings, gems })
     dispatch(startMatchMaking())
   }
 
   render = () => {
-    let { settings: { setup } } = this.state
+    let { settings: { setup } } = this.props
     return (
       <div className="start container">
         <div className="container">
@@ -59,4 +42,10 @@ class Start extends Component {
   }
 }
 
-export default withSocket(connect()(Start))
+function mapStateToProps(state) {
+  return {
+    settings: state.game.settings,
+  }
+}
+
+export default withSocket(connect(mapStateToProps)(Start))

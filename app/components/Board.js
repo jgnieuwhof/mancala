@@ -9,20 +9,23 @@ import { makeMove } from 'reducers/reduceGame'
 
 class Board extends Component {
 
-  componentDidMount = () => {
-    let { socket, dispatch } = this.props
-    socket.on(`server::makeMove`, ({ start }) => {
-      dispatch(makeMove({ start }))
-    })
+  makeMove = ({ start }) => {
+    this.props.dispatch(makeMove({ start }))
   }
 
-  onWellClick = ({ id }) => {
-    let { wells, turn, player, dispatch, socket } = this.props
-    let well = wells[id]
-    if (isActiveWell({ well, player, turn })) {
-      let { id: start } = well
+  componentDidMount = () => {
+    this.props.socket.on(`server::makeMove`, this.makeMove)
+  }
+
+  componentWillUnmount = () => {
+    this.props.socket.off(`server::makeMove`)
+  }
+
+  onWellClick = ({ id: start }) => {
+    let { wells, turn, player, socket } = this.props
+    if (isActiveWell({ well: wells[start], player, turn })) {
       socket.emit(`client::makeMove`, { start })
-      dispatch(makeMove({ start }))
+      this.makeMove({ start })
     }
   }
 
