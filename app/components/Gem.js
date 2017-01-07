@@ -2,39 +2,23 @@ import React, { Component } from 'react'
 
 import { randomInCircle } from 'helpers/maths'
 
-const radius = 10
-const padding = 30
-
 export default class Gem extends Component {
   state = {
-    offset: {},
-  }
-
-  positionFromDims = ({ left, top, width, height, offset }) => {
-    let { x, y } = offset
-    return {
-      left: Math.round(left + (width / 2) - radius + x),
-      top: Math.round(top + (height / 2) - radius + y),
-      width: radius * 2,
-      height: radius * 2,
-    }
-  }
-
-  constructor(props) {
-    super(props)
-    let { dims: { width, height } } = props
-    let offset = randomInCircle({ width, height, padding })
-    this.state = { ...this.state, offset }
+    offset: randomInCircle(),
   }
 
   render = () => {
+    let padding = 30
     let { dims } = this.props
-    let { left, top, width, height } = this.positionFromDims({ ...dims, offset: this.state.offset })
+    let { offset } = this.state
+    let radius = dims.height / 10
+    let offsetX = Math.round(offset.x * (dims.width - padding) / 2)
+    let offsetY = Math.round(offset.y * (dims.height - padding) / 2)
     let style = {
-      left: `${left}px`,
-      top: `${top}px`,
-      width: `${width}px`,
-      height: `${height}px`,
+      left: Math.round(dims.left + (dims.width / 2) - radius + offsetX),
+      top: Math.round(dims.top + (dims.height / 2) - radius + offsetY),
+      width: radius * 2,
+      height: radius * 2,
     }
     return (
       <div className="gem" style={style} />

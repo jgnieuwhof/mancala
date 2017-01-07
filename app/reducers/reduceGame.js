@@ -17,6 +17,12 @@ export const newGame = () => {
   }
 }
 
+export const enterTriage = () => {
+  return (dispatch) => {
+    dispatch({ type: game.ENTER_TRIAGE })
+  }
+}
+
 export const abandonGame = () => {
   return (dispatch, getState, { socket }) => {
     let { game: { gState } } = getState()
@@ -33,12 +39,23 @@ export const startMatchMaking = () => {
   }
 }
 
-export const startGame = ({ settings, gems, player }) => {
-  return (dispatch) => {
+export const startGame = ({ settings, gems, player1, player2 }) => {
+  return (dispatch, getState, { socket }) => {
+    let player, myself, opponent
+    if (player1.socket === socket.id) {
+      player = PLAYER._1
+      myself = player1
+      opponent = player2
+    }
+    else {
+      player = PLAYER._2
+      myself = player2
+      opponent = player1
+    }
     dispatch({
       type: game.START_GAME,
       setup: settings.setup,
-      gems, player
+      gems, player, myself, opponent,
     })
   }
 }
@@ -106,6 +123,8 @@ export const defaultState = {
   settings: {
     setup: 'normal',
   },
+  player1: null,
+  player2: null,
 }
 
 export default function reduceGame(state = defaultState, action) {
@@ -115,6 +134,11 @@ export default function reduceGame(state = defaultState, action) {
     // ------------------------------------------------------------------------
     case game.NEW_GAME:
       update = { gState: GAME_STATES.NEW }
+      break
+
+    // ------------------------------------------------------------------------
+    case game.ENTER_TRIAGE:
+      update = { gState: GAME_STATES.TRIAGE }
       break
 
     // ------------------------------------------------------------------------
@@ -147,6 +171,8 @@ export default function reduceGame(state = defaultState, action) {
         wells: newWells,
         turn: defaultState.turn,
         player: action.player,
+        myself: action.myself,
+        opponent: action.opponent,
       }
       break
 

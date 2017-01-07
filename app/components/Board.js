@@ -30,50 +30,48 @@ class Board extends Component {
   }
 
   render = () => {
-    let { wells, gems, turn, player } = this.props
-    let boardDim = { width: 325, height: 760 }
-    let wellDim = { width: 80, height: 80 }
-    let trayDim = { width: 300, height: 80 }
+    let { wells, gems, turn, player, height, width } = this.props
     let numRows = (GAME.NUM_WELLS / 2) + 1
+    let numWellRows = (GAME.NUM_WELLS / 2) - 1
+    let padding = 20
+    height -= (padding * 2)
+    let boardDim = { width: height * 0.4, height }
+    let wellDim = Math.round((height / numRows) - 10)
+    let trayDim = { width: boardDim.width - 20, height: wellDim }
     let vertSpace = (boardDim.height / numRows) - 2
     let wellMeta = wells.reduce((obj, well) => {
       let turnClass = isActiveWell({ well, player, turn }) ? `turn-${turn}` : ``
       let style, className, onClick
-      if (well.id === 6) {
+      if (well.id === numWellRows || well.id === GAME.NUM_WELLS - 1) {
         style = {
           left: (boardDim.width / 2) - (trayDim.width / 2),
-          top: vertSpace * (numRows - 1),
+          top: well.id === numWellRows ? vertSpace * (numRows - 1) : 0,
           width: trayDim.width,
           height: trayDim.height,
         }
-        className = `tray ${turnClass}`
-      }
-      else if (well.id === 13) {
-        style = {
-          left: (boardDim.width / 2) - (trayDim.width / 2),
-          top: 0,
-          width: trayDim.width,
-          height: trayDim.height,
-        }
-        className = `tray ${turnClass}`
+        className = `tray`
       }
       else {
-        let offset = (boardDim.width / 4) * (well.id < 6 ? -1 : 1)
-        let vertPos = well.id < 6 ? well.id : 12 - well.id
+        let offset = (boardDim.width / 4) * (well.id < numWellRows ? -1 : 1)
+        let vertPos = well.id < numWellRows ? well.id : GAME.NUM_WELLS - 2 - well.id
         style = {
-          left: (boardDim.width / 2) - (wellDim.width / 2) + offset,
+          left: (boardDim.width / 2) - (wellDim / 2) + offset,
           top: vertSpace * (vertPos + 1),
-          width: wellDim.width,
-          height: wellDim.height,
+          width: wellDim, height: wellDim,
         }
         className = `well ${turnClass}`
         onClick = () => { this.onWellClick({ id: well.id }) }
       }
-      obj[well.id] = { style, className, onClick }
-      return obj
+      return { ...obj, [well.id]: { style, className, onClick } }
     }, {})
+    let boardStyle = {
+      width: boardDim.width,
+      height: boardDim.height,
+      top: padding,
+      left: (width / 2) - (boardDim.width / 2),
+    }
     return (
-      <div className="board" style={{ width: `${boardDim.width}px`, height: `${boardDim.height}px` }}>
+      <div className="board" style={boardStyle}>
         <div className="wells">
           { wells.map(well => (
             <div key={well.id} { ...wellMeta[well.id] } >

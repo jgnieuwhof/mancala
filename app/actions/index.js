@@ -4,6 +4,7 @@ export const game = namespaceActions(
   'game',
   [
     'NEW_GAME',
+    'ENTER_TRIAGE',
     'START_MATCHMAKING',
     'START_GAME',
     'FINISH_GAME',
@@ -11,5 +12,12 @@ export const game = namespaceActions(
     'UPDATE_SETTINGS',
     'CHANGE_TURN',
     'CAPTURE_WELL',
-  ]
+  ],
+)
+
+export const user = namespaceActions(
+  'user',
+  [
+    'SET_USERNAME',
+  ],
 )

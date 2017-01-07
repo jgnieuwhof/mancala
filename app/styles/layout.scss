@@ -52,6 +52,12 @@ body {
     font-size: 18px;
   }
 
+  .username {
+    position: relative;
+    font-size: 17px;
+    top: 6px;
+  }
+
   .new-game {
     width: 100px;
   }
@@ -102,14 +108,10 @@ body {
 
 .game {
   position: absolute;
-  top: 3px;
-  left: 0;
+  top: 0;
   right: 0;
   bottom: 0;
-  // Vertically center children
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  left: 0;
 }
 
 .game-background {
@@ -121,9 +123,19 @@ body {
   background: #222;
 }
 
+.game-username {
+  font-weight: bold;
+
+  &.player-1 {
+    color: rgb(66, 134, 244);
+  }
+  &.player-2 {
+    color: rgb(224, 74, 69);
+  }
+}
+
 .board {
-  position: relative;
-  top: -25px;
+  position: absolute;
   background-color: #e2cd95;
   border-radius: 10px;
   box-shadow:
@@ -138,6 +150,14 @@ body {
     left: 0;
     bottom: 0;
     right: 0;
+  }
+
+  .wells {
+    z-index: 2;
+  }
+
+  .gems {
+    z-index: 1;
   }
 
   .tray, .well, .gem {
@@ -156,24 +176,13 @@ body {
     }
   }
 
-  .gem{
+  .gem {
     box-shadow: rgba(0, 0, 0, 0.8) -5px -5px 80px -7px inset;
     border: 1px solid rgba(255, 255, 255, 0.4)
-  }
-
-  .wells {
-    z-index: 2;
-  }
-
-  .gems {
-    z-index: 1;
   }
 }
 
 @media(max-height: $min-viewport-height) {
   .board {
-    position: absolute;
-    top: 25px;
-    margin-bottom: 100px;
   }
 }
