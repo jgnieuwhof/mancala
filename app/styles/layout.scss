@@ -179,9 +179,11 @@ body {
 
     &.turn-player-1 {
       background-color: rgba(155, 185, 255, 0.2);
+      cursor: pointer;
     }
     &.turn-player-2 {
       background-color: rgba(255, 155, 155, 0.2);
+      cursor: pointer;
     }
   }
 
