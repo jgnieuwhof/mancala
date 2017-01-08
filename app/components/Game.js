@@ -71,7 +71,7 @@ class Game extends Component {
           <Start text={`Begin!`} />
         }
         { gState === GAME_STATES.MATCHMAKING &&
-          <div className="text-center">
+          <div className="container text-center">
             <h2>Matchmaking...</h2>
           </div>
         }
