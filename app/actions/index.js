@@ -19,5 +19,6 @@ export const user = namespaceActions(
   'user',
   [
     'SET_USERNAME',
+    'SET_USER_ID',
   ],
 )

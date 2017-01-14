@@ -1,28 +1,48 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { GAME_STATES, PLAYER } from 'constants'
+import { GAME_STATES } from 'constants'
 import Board from 'components/Board'
 import Start from 'components/Start'
 import Triage from 'components/Triage'
 import withSocket from 'components/with/socket'
 import { newGame, startGame, enterTriage } from 'reducers/reduceGame'
-import { setUsername } from 'reducers/reduceUser'
+import { setUserName, setUserId } from 'reducers/reduceUser'
 
 class Game extends Component {
   state = {
     view: { width: 0, height: 0 },
   }
 
+  newGame = () => {
+    this.props.dispatch(newGame())
+  }
+
+  matchMade = ({ gems, player1, player2 }) => {
+    let { settings, dispatch } = this.props
+    dispatch(startGame({ settings, gems, player1, player2 }))
+  }
+
+  connectionMade = () => {
+    let { dispatch, socket } = this.props
+    dispatch(setUserId(socket.id))
+  }
+
+  connectionLost = () => {
+    this.props.dispatch(setUserId(null))
+  }
+
   componentWillMount = () => {
-    let { dispatch } = this.props
+    let { dispatch, socket } = this.props
     if (localStorage.username) {
-      dispatch(setUsername({ username: localStorage.username }))
+      dispatch(setUserName(localStorage.username))
       dispatch(newGame())
     }
     else {
       dispatch(enterTriage())
     }
+    socket.on(`connect`, this.connectionMade)
+    socket.on(`disconnect`, this.connectionLost)
   }
 
   componentDidMount = () => {
@@ -37,6 +57,8 @@ class Game extends Component {
     let { socket } = this.props
     socket.off(`server::abandoned`, this.newGame)
     socket.off(`server::matchMade`, this.matchMade)
+    socket.off(`connect`, this.connectionMade)
+    socket.off(`disconnect`, this.connectionLost)
     window.removeEventListener(`resize`, this.updateGameView)
   }
 
@@ -49,19 +71,8 @@ class Game extends Component {
     })
   }
 
-  newGame = () => {
-    this.props.dispatch(newGame())
-  }
-
-  matchMade = ({ gems, player1, player2 }) => {
-    let { settings, dispatch } = this.props
-    dispatch(startGame({ settings, gems, player1, player2 }))
-  }
-
   render = () => {
-    let { gState, myself, opponent, player } = this.props
-    // <div className="game-username player-1 pull-left">{ player === PLAYER._1 ?  myself.username : opponent.username }</div>
-    // <div className="game-username player-2 pull-right">{ player === PLAYER._2 ?  myself.username : opponent.username }</div>
+    let { gState } = this.props
     return (
       <div className="game" ref={r => {this.gameView = r}}>
         { gState === GAME_STATES.TRIAGE &&
@@ -92,9 +103,6 @@ function mapStateToProps(state) {
   return {
     gState: state.game.gState,
     settings: state.game.settings,
-    player: state.game.player,
-    myself: state.game.myself,
-    opponent: state.game.opponent,
   }
 }
 

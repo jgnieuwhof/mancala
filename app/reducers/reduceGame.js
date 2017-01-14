@@ -40,22 +40,11 @@ export const startMatchMaking = () => {
 }
 
 export const startGame = ({ settings, gems, player1, player2 }) => {
-  return (dispatch, getState, { socket }) => {
-    let player, myself, opponent
-    if (player1.socket === socket.id) {
-      player = PLAYER._1
-      myself = player1
-      opponent = player2
-    }
-    else {
-      player = PLAYER._2
-      myself = player2
-      opponent = player1
-    }
+  return dispatch => {
     dispatch({
       type: game.START_GAME,
       setup: settings.setup,
-      gems, player, myself, opponent,
+      gems, player1, player2,
     })
   }
 }
@@ -119,7 +108,6 @@ export const defaultState = {
   gems: [],
   wells: [],
   turn: PLAYER._1,
-  player: null,
   settings: {
     setup: 'normal',
   },
@@ -170,9 +158,8 @@ export default function reduceGame(state = defaultState, action) {
         gems: newGems,
         wells: newWells,
         turn: defaultState.turn,
-        player: action.player,
-        myself: action.myself,
-        opponent: action.opponent,
+        player1: action.player1,
+        player2: action.player2,
       }
       break
 
