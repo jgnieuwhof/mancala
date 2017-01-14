@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Grid, FormGroup, ControlLabel, FormControl, Col } from 'react-bootstrap'
 
-import { setUsername } from 'reducers/reduceUser'
+import { setUserName } from 'reducers/reduceUser'
 import { newGame } from 'reducers/reduceGame'
 
 class Triage extends Component {
@@ -32,7 +32,7 @@ class Triage extends Component {
     let { name, nameState } = this.state
     let { dispatch } = this.props
     if (nameState === `success`) {
-      dispatch(setUsername({ username: name }))
+      dispatch(setUserName(name))
       dispatch(newGame())
     }
   }
