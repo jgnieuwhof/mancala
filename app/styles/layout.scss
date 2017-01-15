@@ -177,15 +177,11 @@ body {
   .user-details {
     position: absolute;
     top: 0px;
-    width: 200px;
-    height: 100px;
     display: flex;
     align-items: center;
     font-weight: bold;
-    font-size: 20px;
 
     &.player-1 {
-      left: -230px;
       justify-content: flex-end;
       &.active {
         color: rgb(45, 103, 196);
@@ -193,7 +189,6 @@ body {
       }
     }
     &.player-2 {
-      right: -240px;
       justify-content: flex-start;
       &.active {
         color: rgb(196, 45, 45);

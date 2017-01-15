@@ -31,7 +31,12 @@ class Well extends Component {
       >
         <span className="well-count">{well.gems.length}</span>
         { trayPlayer &&
-          <UserDetails player={trayPlayer} turn={turn} user={trayPlayer === PLAYER._1 ?  player1 : player2 }/>
+          <UserDetails
+            player={trayPlayer}
+            turn={turn}
+            wellDims={dims}
+            user={trayPlayer === PLAYER._1 ?  player1 : player2 }
+          />
         }
       </div>
     )
