@@ -83,7 +83,8 @@ class Game extends Component {
         }
         { gState === GAME_STATES.MATCHMAKING &&
           <div className="container text-center">
-            <h2>Matchmaking...</h2>
+            <h2 className="loading">Matchmaking</h2>
+            <span>(if you're flying solo open a second browser or private window)</span>
           </div>
         }
         { gState === GAME_STATES.PLAYING &&
