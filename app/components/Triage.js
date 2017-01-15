@@ -16,8 +16,8 @@ class Triage extends Component {
   }
 
   validateName = (name) => {
-    if (name.length < 2) { return `error` }
-    else if (name.length < 6) { return `warning` }
+    if (name.length < 2 || name.length > 20) { return `error` }
+    else if (name.length < 6 || name.length > 15) { return `warning` }
     return `success`
   }
 
@@ -45,7 +45,7 @@ class Triage extends Component {
           <form onSubmit={this.submit}>
             <FormGroup controlId="screenName" validationState={nameState} >
               <ControlLabel>
-                { nameState !== `success` && `username must be at least 6 characters` }
+                { nameState !== `success` && `username must be between 6 and 20 characters` }
                 { nameState === `success` && `username looks good` }
               </ControlLabel>
               <FormControl
